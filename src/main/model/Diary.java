@@ -1,18 +1,17 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class Diary {
 
     List<Task> toDoList;
     List<Task> completedTasks;
-    List<EntryBatch> entryBatches;
+    List<Entry> entries;
 
-    public Diary(List<EntryBatch> entryBatches, List<Task> toDoList, List<Task> completedTasks) {
+    public Diary(List<Entry> entries, List<Task> toDoList, List<Task> completedTasks) {
         this.toDoList = toDoList;
-        this.entryBatches = entryBatches;
+        this.entries = entries;
         this.completedTasks = completedTasks;
     }
 
@@ -20,9 +19,11 @@ public class Diary {
         this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public void addEntryBatch(EntryBatch eb) {
-        removeCompletedTasks(eb);
-        entryBatches.add(0, eb);
+    public void addEntry(Entry e) {
+        entries.add(0, e);
+        if (e instanceof ProgressReport) {
+            checkAndRemoveCompletedTask((ProgressReport) e);
+        }
     }
 
     public void addTask(Task t) throws IllegalArgumentException {
@@ -39,30 +40,26 @@ public class Diary {
                     return;
                 }
             }
-            toDoList.add(index, t);
+            toDoList.add(t);
         }
     }
 
-    private void removeCompletedTasks(EntryBatch eb) {
-        List<Entry> entries = eb.getEntries();
-        for (Entry e: entries) {
-            if (e instanceof ProgressReport) {
-                ProgressReport progressReport = (ProgressReport) e;
-                Task parentTask = progressReport.getParentTask();
-                if (parentTask.isComplete()) {
-                    completedTasks.add(parentTask);
-                    toDoList.remove(parentTask);
-                }
-            }
+    private void checkAndRemoveCompletedTask(ProgressReport progressReport) {
+        Task parentTask = progressReport.getParentTask();
+        if (parentTask.isComplete()) {
+            completedTasks.add(parentTask);
+            toDoList.remove(parentTask);
         }
     }
+
+
 
     public List<Task> getToDoList() {
         return toDoList;
     }
 
-    public List<EntryBatch> getEntryBatches() {
-        return entryBatches;
+    public List<Entry> getEntries() {
+        return entries;
     }
 
     public List<Task> getCompletedTasks() {

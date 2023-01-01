@@ -27,7 +27,7 @@ public class Task implements Comparable<LocalDate> {
     }
 
     public void addProgressReport(ProgressReport pr) {
-        progressReports.add(pr);
+        progressReports.add(0, pr);
     }
 
     public boolean isComplete() {

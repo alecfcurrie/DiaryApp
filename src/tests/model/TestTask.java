@@ -4,8 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTask {
 
@@ -22,12 +23,31 @@ public class TestTask {
     void testConstructor() {
         assertEquals(TITLE, task.getTitle());
         assertEquals(DUE_DATE, task.getDueDate());
+        assertFalse(task.isComplete());
     }
 
     @Test
     void testIsOverdue() {
-
+        assertFalse(task.isOverdue());
+        Task overdueTask = new Task("Overdue Task", LocalDate.of(2000, 5, 5));
+        assertTrue(overdueTask.isOverdue());
     }
 
+    @Test
+    void testComplete() {
+        task.complete();
+        assertTrue(task.isComplete());
+    }
+
+    @Test
+    void testAddProgressReport() {
+        ProgressReport report1 = new ProgressReport("Report 1", task, false);
+        ProgressReport report2 = new ProgressReport("Report 2", task, false);
+        task.addProgressReport(report1);
+        task.addProgressReport(report2);
+        List<ProgressReport> reports = task.getProgressReports();
+        assertEquals(report1, reports.get(1));
+        assertEquals(report2, reports.get(0));
+    }
 
 }

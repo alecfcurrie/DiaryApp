@@ -1,14 +1,18 @@
 package model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract class Entry {
     private String title;
     private String desc;
 
+    private LocalDateTime time;
+
     protected Entry(String title, String desc) {
         this.title = title;
         this.desc = desc;
+        time = LocalDateTime.now();
     }
 
     public String getTitle() {
@@ -17,6 +21,10 @@ public abstract class Entry {
 
     public String getDesc() {
         return desc;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
     }
 
     @Override

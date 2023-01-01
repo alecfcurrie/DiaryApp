@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
-public class TestActivity {
+public class TestEventEntry {
 
     public static final String TITLE = "Roller coaster";
     public static final String DESC = "Saw Maverick at Cedar Point";
-    Activity activity;
+    EventEntry eventEntry;
     Image image;
 
     @BeforeEach
@@ -26,14 +26,14 @@ public class TestActivity {
         } catch (IOException e) {
             fail("Failed to read image");
         }
-        activity = new Activity(TITLE, DESC, image);
+        eventEntry = new EventEntry(TITLE, DESC, image);
     }
 
     @Test
     void testConstructor() {
-        assertEquals(TITLE, activity.getTitle());
-        assertEquals(DESC, activity.getDesc());
-        assertEquals(image, activity.getImage());
+        assertEquals(TITLE, eventEntry.getTitle());
+        assertEquals(DESC, eventEntry.getDesc());
+        assertEquals(image, eventEntry.getImage());
     }
 
 }

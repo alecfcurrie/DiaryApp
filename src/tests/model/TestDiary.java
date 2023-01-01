@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,75 +18,62 @@ public class TestDiary {
     Task task4 = new Task("Task4", LocalDate.of(2000, 4, 1));
     Task task5 = new Task("Task5", LocalDate.of(2000, 6, 1));
 
-    Activity activity1 = new Activity("Act1", "Act1", null);
-    Activity activity2 = new Activity("Act2", "Act2", null);
-    Activity activity3 = new Activity("Act3", "Act3", null);
-
-    EntryBatch eb1;
-    EntryBatch eb2;
-    EntryBatch eb3;
+    ProgressReport completeTask1 = new ProgressReport("Completed task 1", task1, true);
+    ProgressReport completeTask2 = new ProgressReport("Completed task 2", task2, true);
+    ProgressReport workOnTask4 = new ProgressReport("Worked on task 4", task4, false);
+    EventEntry eventEntry1 = new EventEntry("Act1", "Act1", null);
+    EventEntry eventEntry2 = new EventEntry("Act2", "Act2", null);
+    EventEntry eventEntry3 = new EventEntry("Act3", "Act3", null);
 
     Diary testDiary;
 
     @BeforeEach
     void setup() {
         testDiary = new Diary();
-        eb1 = new EntryBatch();
-        eb3 = new EntryBatch();
-        eb2 = new EntryBatch();
-
-        eb1.addCompleteTaskEntry(task1);
-        eb1.addCompleteTaskEntry(task2);
-
-        eb2.addCompleteTaskEntry(task3_1);
-        eb2.addCompleteTaskEntry(task3_2);
-        eb2.addActivity(activity1);
-
-        eb3.addCompleteTaskEntry(task4);
-        eb3.addCompleteTaskEntry(task5);
-        eb3.addActivity(activity2);
-        eb3.addActivity(activity3);
     }
 
     @Test
     void testConstructorOne() {
         assertEquals(0, testDiary.getToDoList().size());
-        assertEquals(0, testDiary.getEntryBatches().size());
+        assertEquals(0, testDiary.getEntries().size());
     }
 
     @Test
     void testConstructorTwo() {
-        List<EntryBatch> entryBatches = new ArrayList<>();
-        entryBatches.add(eb1);
-        entryBatches.add(eb2);
-        List<Task> todoList = new LinkedList<>();
+        List<Entry> entries = new ArrayList<>();
+        entries.add(eventEntry1);
+        entries.add(eventEntry2);
+        entries.add(eventEntry3);
+        entries.add(completeTask1);
+        entries.add(completeTask2);
+        List<Task> todoList = new ArrayList<>();
+        todoList.add(task3_1);
+        todoList.add(task3_2);
         todoList.add(task4);
         todoList.add(task5);
         List<Task> completedTasks = new ArrayList<>();
         completedTasks.add(task1);
         completedTasks.add(task2);
-        completedTasks.add(task3_1);
-        completedTasks.add(task3_2);
-        Diary testDiaryTwo = new Diary(entryBatches, todoList, completedTasks);
+        Diary testDiaryTwo = new Diary(entries, todoList, completedTasks);
         assertEquals(todoList, testDiaryTwo.getToDoList());
-        assertEquals(entryBatches, testDiaryTwo.getEntryBatches());
+        assertEquals(entries, testDiaryTwo.getEntries());
         assertEquals(completedTasks, testDiaryTwo.getCompletedTasks());
     }
 
     @Test
-    void testAddEntryBatch() {
-        testDiary.addEntryBatch(eb1);
-        List<EntryBatch> entryBatches = testDiary.getEntryBatches();
-        assertEquals(1, entryBatches.size());
-        assertTrue(entryBatches.contains(eb1));
+    void testAddEntry() {
+        testDiary.addEntry(eventEntry1);
+        List<Entry> entries = testDiary.getEntries();
+        assertEquals(1, entries.size());
+        assertTrue(entries.contains(eventEntry1));
 
-        testDiary.addEntryBatch(eb2);
-        testDiary.addEntryBatch(eb3);
-        entryBatches = testDiary.getEntryBatches();
-        assertEquals(3,entryBatches.size());
-        assertEquals(eb3, entryBatches.get(0));
-        assertEquals(eb2, entryBatches.get(1));
-        assertEquals(eb1, entryBatches.get(2));
+        testDiary.addEntry(workOnTask4);
+        testDiary.addEntry(completeTask1);
+        entries = testDiary.getEntries();
+        assertEquals(3,entries.size());
+        assertEquals(completeTask1, entries.get(0));
+        assertEquals(workOnTask4, entries.get(1));
+        assertEquals(eventEntry1, entries.get(2));
     }
 
     @Test
@@ -178,7 +164,10 @@ public class TestDiary {
     @Test
     void testRemovalOfCompletedTasks() {
         addTasksInOrder();
-        testDiary.addEntryBatch(eb1);
+        testDiary.addEntry(completeTask1);
+        testDiary.addEntry(completeTask2);
+        testDiary.addEntry(workOnTask4); //Should have no impact
+        testDiary.addEntry(eventEntry1); //Should have no impact
         List<Task> todoList = testDiary.getToDoList();
         assertTrue(todoList.contains(task3_1));
         assertTrue(todoList.contains(task3_2));
@@ -198,7 +187,7 @@ public class TestDiary {
     @Test
     void testClearCompletedTasks() {
         addTasksInOrder();
-        testDiary.addEntryBatch(eb1);
+        testDiary.addEntry(completeTask1);
         testDiary.clearCompletedTasks();
         assertEquals(0, testDiary.getCompletedTasks().size());
     }

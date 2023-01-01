@@ -2,10 +2,10 @@ package model;
 
 import java.awt.*;
 
-public class Activity extends Entry{
+public class EventEntry extends Entry{
 
     private Image  image;
-    public Activity(String title, String desc, Image image) {
+    public EventEntry(String title, String desc, Image image) {
         super(title, desc);
         this.image = image;
     }
